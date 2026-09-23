@@ -21,13 +21,11 @@
 
 项目使用 [tex-fmt](https://github.com/WGUNDERWOOD/tex-fmt) 作为 LaTeX formatter，使用 [remark-math](https://github.com/remarkjs/remark-math) 作为 Markdown math parser。核心逻辑都由 tex-fmt 和 remark-math 完成，项目只进行简单包装。
 
-项目提供 `md-math-fmt` CLI 和 `Markdown Math Formatter` VS Code 扩展。当前 CLI 为 JavaScript 构建产物，运行时需要 Node.js；尚未提供独立二进制。
+项目提供 `md-math-fmt` CLI 和 `Markdown Math Formatter` VS Code 扩展。当前 CLI 为 JavaScript 构建产物，运行时需要 Node.js 以及可从 PATH 调用的 tex-fmt；项目不内置 tex-fmt，且尚未提供独立二进制。
 
 ## 构建
 
-需要 Node.js 22 或更高版本、pnpm 12，以及可从 PATH 调用的 tex-fmt。
-
-项目不内置 tex-fmt；当前集成测试使用 tex-fmt 0.5.7。
+需要 Node.js 22 或更高版本、pnpm 12。
 
 ```sh
 pnpm install
@@ -87,16 +85,18 @@ md-math-fmt --tex-fmt /path/to/tex-fmt --config tex-fmt.toml notes.md
 
 参数说明：
 
+- `-h` / `--help` 查看帮助
+- `-v` / `--version` 查看版本
 - `--line-width <n>` 设置块级公式换行宽度，行内公式禁用自动折行
-- 缺少 `--config` 时默认禁用 tex-fmt 的配置文件
+- 缺少 `--config` 时禁止 tex-fmt 的配置文件寻找
 - `--write` 和 `--check` 不能同时使用
 - 多个输入文件无法输出到标准输出，必须选择 `--write` 和 `--check` 中的一种模式。写入前会先完成全部文件的格式化，任一文件读取或格式化失败则不会写入该批文件。
 
 退出码：
 
 - `0` 表示成功
-- `1` 表示 `--check` 发现需要格式化
-- `2` 表示参数、文件或格式化错误
+- `1` 表示参数、文件或格式化错误
+- `2` 表示 `--check` 发现需要格式化
 
 ## VS Code 扩展
 
@@ -169,7 +169,10 @@ Markdown math 解析由 remark-math 完成。
 
 ### LaTeX 格式化
 
-LaTeX 格式化规则由 tex-fmt 决定。请参考相关文档。
+LaTeX 格式化规则由 tex-fmt 决定。
+
+- 默认配置请参考 <https://github.com/WGUNDERWOOD/tex-fmt#configuration-file-options>，程序提供参数 `--config` 用于指定 tex-fmt 的配置文件。
+- 可以使用 `--line-width` 覆盖 tex-fmt 的 `wraplen` 配置。
 
 ## 验证
 
@@ -199,6 +202,5 @@ pnpm test
 
 测试覆盖核心格式化、CLI 和扩展接口。
 
-真实 tex-fmt 集成测试在未安装 tex-fmt 时会跳过，完整验证前请确保 `tex-fmt --version` 可执行。
-
-扩展接口测试使用 VS Code API 替身，不替代在 VS Code 扩展宿主中的手动验证。
+- 真实 tex-fmt 集成测试在未安装 tex-fmt 时会跳过，完整验证前请确保 `tex-fmt --version` 可执行。当前集成测试使用 tex-fmt 0.5.7。
+- 扩展接口测试使用 VS Code API 替身，无法替代在 VS Code 扩展宿主中的手动验证。

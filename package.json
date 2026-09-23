@@ -68,7 +68,7 @@
     "check": "biome check .",
     "check:fix": "biome check --write .",
     "build": "pnpm build:cli && pnpm build:extension",
-    "build:cli": "esbuild src/index.ts src/cli.ts --bundle --platform=node --format=esm --target=node22 --outdir=dist && tsc --emitDeclarationOnly",
+    "build:cli": "esbuild src/index.ts src/cli.ts --bundle --platform=node --format=esm --target=node22 --external:commander --outdir=dist && tsc --emitDeclarationOnly",
     "build:extension": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.cjs",
     "typecheck": "tsc --noEmit",
     "test": "pnpm build && node --test test/*.test.mjs",
@@ -78,6 +78,7 @@
     "package:extension": "vsce package --no-dependencies --allow-missing-repository --skip-license"
   },
   "dependencies": {
+    "commander": "^14.0.3",
     "remark-math": "^6.0.0",
     "remark-parse": "^11.0.0",
     "unified": "^11.0.5",
