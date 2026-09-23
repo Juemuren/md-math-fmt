@@ -173,8 +173,27 @@ LaTeX 格式化规则由 tex-fmt 决定。请参考相关文档。
 
 ## 验证
 
+### 静态检查和格式化
+
+项目使用 Biome 检查和格式化 TypeScript、JavaScript 和 JSON
+
+```sh
+pnpm check
+```
+
+### 类型检查
+
+项目使用 TypeScript 进行类型检查
+
 ```sh
 pnpm typecheck
+```
+
+### 测试
+
+项目使用 Node.js 内置的测试模块进行测试
+
+```sh
 pnpm test
 ```
 

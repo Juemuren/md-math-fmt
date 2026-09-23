@@ -63,6 +63,10 @@
     }
   },
   "scripts": {
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
     "build": "pnpm build:cli && pnpm build:extension",
     "build:cli": "esbuild src/index.ts src/cli.ts --bundle --platform=node --format=esm --target=node22 --outdir=dist && tsc --emitDeclarationOnly",
     "build:extension": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.cjs",
@@ -80,6 +84,7 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.14",
     "@types/node": "^22.0.0",
     "@types/vscode": "~1.96.0",
     "@vscode/vsce": "^3.0.0",
