@@ -1,0 +1,89 @@
+{
+  "name": "md-math-fmt",
+  "version": "0.1.0",
+  "packageManager": "pnpm@12.4.2",
+  "description": "Format Markdown math with remark-math and tex-fmt",
+  "type": "module",
+  "main": "./dist/extension.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "md-math-fmt": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22",
+    "vscode": "^1.96.0"
+  },
+  "displayName": "Markdown Math Formatter",
+  "publisher": "md-math-fmt",
+  "categories": [
+    "Formatters"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "configuration": {
+      "title": "Markdown Math Formatter",
+      "properties": {
+        "md-math-fmt.texFmtPath": {
+          "type": "string",
+          "default": "tex-fmt",
+          "scope": "machine-overridable",
+          "description": "Path to the tex-fmt executable."
+        },
+        "md-math-fmt.configPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to a tex-fmt TOML configuration, relative to the document directory."
+        },
+        "md-math-fmt.lineWidth": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 80,
+          "description": "Maximum line width for block formulas."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "pnpm build:cli && pnpm build:extension",
+    "build:cli": "esbuild src/index.ts src/cli.ts --bundle --platform=node --format=esm --target=node22 --outdir=dist && tsc --emitDeclarationOnly",
+    "build:extension": "esbuild src/extension.ts --bundle --platform=node --format=cjs --target=node20 --external:vscode --outfile=dist/extension.cjs",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm build && node --test test/*.test.mjs",
+    "prepack": "pnpm build:cli",
+    "vscode:prepublish": "pnpm build:extension",
+    "package:cli": "pnpm pack",
+    "package:extension": "vsce package --no-dependencies --allow-missing-repository --skip-license"
+  },
+  "dependencies": {
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "~1.96.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0"
+  }
+}
