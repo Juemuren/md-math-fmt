@@ -21,22 +21,22 @@
 
 项目使用 [tex-fmt](https://github.com/WGUNDERWOOD/tex-fmt) 作为 LaTeX formatter，使用 [remark-math](https://github.com/remarkjs/remark-math) 作为 Markdown math parser。核心逻辑都由 tex-fmt 和 remark-math 完成，项目只进行简单包装。
 
-项目提供 `md-math-fmt` CLI 和 `Markdown Math Formatter` VS Code 扩展。当前 CLI 为 JavaScript 构建产物，运行时需要 Node.js 以及可从 PATH 调用的 tex-fmt；项目不内置 tex-fmt，且尚未提供独立二进制。
+项目提供 `md-math-fmt` CLI 和 `Markdown Math Formatter` VS Code 扩展。当前 CLI 为 JavaScript 构建产物，运行时需要本机已安装 Node.js （22 或更高版本）和 tex-fmt；项目不内置 tex-fmt，也不提供包含 Node.js runtime 在内的独立二进制。
 
 ## 构建
 
-需要 Node.js 22 或更高版本、pnpm 12。
+包管理器为 pnpm。
 
 ```sh
 pnpm install
 pnpm build
 ```
 
-构建结果位于 `dist/`，包含 CLI、可导入的格式化 API 和 VS Code 扩展。
+构建结果位于 `dist/`，包含 CLI、可导入的 API 和 VS Code 扩展。
 
 ## 打包
 
-CLI 和 VS Code 扩展需要分别打包；打包前会自动进行对应的构建。
+CLI 和 VS Code 扩展需要分别打包；打包前会自动运行对应的构建。
 
 ```sh
 # 构建 CLI 并生成 md-math-fmt-*.tgz
@@ -114,7 +114,7 @@ md-math-fmt --tex-fmt /path/to/tex-fmt --config tex-fmt.toml notes.md
     code --install-extension md-math-fmt-*.vsix
     ```
 
-    或者也可以在 VS Code 中运行命令 **Extensions: Install from VSIX...**，然后选择生成的 `md-math-fmt-*.vsix`。
+    或者也可以在 VS Code 中运行命令 **Extensions: Install from VSIX...**，然后选择生成的 `md-math-fmt-*.vsix` 文件
 
 扩展名称为 `Markdown Math Formatter`。
 
@@ -142,20 +142,55 @@ md-math-fmt --tex-fmt /path/to/tex-fmt --config tex-fmt.toml notes.md
 
 ## 程序接口
 
+项目以 ESM 形式导出 `formatMarkdown` 和 `formatMathEdits` 两个函数。项目被作为依赖安装后，可以在 JavaScript / TypeScript 中调用这些接口。
+
+### formatMarkdown
+
+传入 Markdown 字符串，返回格式化后的全文。
+
 ```js
 import { formatMarkdown } from 'md-math-fmt';
 
+const input = '行内公式：$ x $';
 const output = await formatMarkdown(input, {
   texFmtPath: 'tex-fmt',
   lineWidth: 80,
 });
+
+console.log(output);
+// 行内公式：$x$
 ```
 
-也可调用 `formatMathEdits` 获得 `{ start, end, text }` 编辑列表，偏移量为 UTF-16 字符偏移。
+### formatMathEdits
 
-两种接口均支持 `configPath`、`cwd`、`tabSize`、`useTabs`、`timeoutMs` 和 `signal`。
+只返回需要修改的位置和替换内容，适合需要自行应用修改的场景；没有变化时返回空数组。
 
-单个公式的默认进程超时为 10 秒，格式化失败会抛出带公式行号的错误。
+```js
+import { formatMathEdits } from 'md-math-fmt';
+
+const edits = await formatMathEdits('公式：$ x $');
+console.log(edits);
+// [{ start: 3, end: 8, text: '$x$' }]
+```
+
+`start` 和 `end` 是原文中的 UTF-16 偏移量，对应 `source.slice(start, end)` 的范围。多项修改应从后向前应用。
+
+### 格式化选项
+
+两个接口都可以通过第二个参数设置格式化选项，常用选项如下：
+
+| 选项 | 说明 |
+| --- | --- |
+| `texFmtPath` | tex-fmt 可执行文件路径，默认为 `'tex-fmt'` |
+| `configPath` | tex-fmt 配置文件路径，省略时不查找配置文件 |
+| `lineWidth` | 块级公式的换行宽度，行内公式不自动折行 |
+| `tabSize` | 缩进宽度 |
+| `useTabs` | 设为 `true` 时使用制表符缩进 |
+| `cwd` | 工作目录 |
+| `timeoutMs` | 单个公式的超时毫秒数，默认 `10000` |
+| `signal` | 取消操作 |
+
+格式化失败时可用 `try...catch` 捕获错误，错误信息会包含出错公式的行号。
 
 ## 行为与边界
 
