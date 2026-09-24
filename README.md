@@ -1,23 +1,75 @@
+<!-- markdownlint-disable-file MD033 -->
+
 # Markdown Math Formatter
 
 格式化 Markdown 中的数学代码。
 
-数学代码包括由 `$...$` 隔开的行内代码，也包括由 `$$...$$` 隔开的块级代码。示例如下
+数学代码包括由 `$...$` 隔开的行内代码，也包括由 `$$...$$` 隔开的块级代码。
 
-- 行内数学代码
+<table width="100%">
 
-  ```markdown
-  $\omega_X=\star X^\flat$
-  ```
+<tr>
+  <th>格式化前</th>
+  <th>格式化后</th>
+</tr>
 
-- 块级数学代码
+<tr>
+<td>
 
-  ```markdown
-  $$
-  \mathrm{d}(F_x\partial_x + F_y\partial_y + F_z\partial_z)
-  = F_x\mathrm{d}x + F_y\mathrm{d}y + F_z\mathrm{d}z
-  $$
-  ```
+```markdown
+# 格式化示例
+
+设 $ \Omega^k(M) $ 表示光滑流形 $ M $ 上的光滑 $ k $-形式空间。外微分定义为线性映射
+
+$$
+  \mathrm{d}: \Omega^k(M) \longrightarrow \Omega^{k+1}(M)
+$$
+
+对 $k$-形式外微分后得到 $k+1$-形式
+
+$$
+\begin{align}
+\omega
+&=\sum_I f_I \mathrm{d}x^I \\
+\mathrm{d}\omega
+&= \sum_I \mathrm{d}f_I \wedge \mathrm{d}x^I \\
+\mathrm{d}\omega
+&= \sum_I \sum_j \frac{\partial f_I}{\partial x^j} \mathrm{d}x^j \wedge \mathrm{d}x^I
+\end{align}
+$$
+```
+
+</td>
+<td>
+
+```markdown
+# 格式化示例
+
+设 $\Omega^k(M)$ 表示光滑流形 $M$ 上的光滑 $k$-形式空间。外微分定义为线性映射
+
+$$
+\mathrm{d}: \Omega^k(M) \longrightarrow \Omega^{k+1}(M)
+$$
+
+对 $k$-形式外微分后得到 $k+1$-形式
+
+$$
+\begin{align}
+  \omega
+  &=\sum_I f_I \mathrm{d}x^I \\
+  \mathrm{d}\omega
+  &= \sum_I \mathrm{d}f_I \wedge \mathrm{d}x^I \\
+  \mathrm{d}\omega
+  &= \sum_I \sum_j \frac{\partial f_I}{\partial x^j} \mathrm{d}x^j
+  \wedge \mathrm{d}x^I
+\end{align}
+$$
+```
+
+</td>
+</tr>
+
+</table>
 
 项目使用 [tex-fmt](https://github.com/WGUNDERWOOD/tex-fmt) 作为 LaTeX formatter，使用 [remark-math](https://github.com/remarkjs/remark-math) 作为 Markdown math parser。核心逻辑都由 tex-fmt 和 remark-math 完成，项目只进行简单包装。
 
