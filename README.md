@@ -2,9 +2,7 @@
 
 # Markdown Math Formatter
 
-格式化 Markdown 中的数学代码。
-
-数学代码包括由 `$...$` 隔开的行内代码，也包括由 `$$...$$` 隔开的块级代码。
+格式化 Markdown 中的数学代码，包括用 `$...$` 隔开的行内代码和用 `$$...$$` 隔开的块级代码。
 
 <table width="100%">
 
@@ -19,13 +17,15 @@
 ```markdown
 # 格式化示例
 
-设 $ \Omega^k(M) $ 表示光滑流形 $ M $ 上的光滑 $ k $-形式空间。外微分定义为线性映射
+设 $ \Omega^k(M) $ 表示光滑流形 $ M $ 上的光滑 $ k $-形式空间。
+
+外微分定义为一个线性映射
 
 $$
   \mathrm{d}: \Omega^k(M) \longrightarrow \Omega^{k+1}(M)
 $$
 
-对 $k$-形式外微分后得到 $k+1$-形式
+对 $ k $-形式外微分后得到 $ k+1 $-形式
 
 $$
 \begin{align}
@@ -33,8 +33,6 @@ $$
 &=\sum_I f_I \mathrm{d}x^I \\
 \mathrm{d}\omega
 &= \sum_I \mathrm{d}f_I \wedge \mathrm{d}x^I \\
-\mathrm{d}\omega
-&= \sum_I \sum_j \frac{\partial f_I}{\partial x^j} \mathrm{d}x^j \wedge \mathrm{d}x^I
 \end{align}
 $$
 ```
@@ -45,7 +43,9 @@ $$
 ```markdown
 # 格式化示例
 
-设 $\Omega^k(M)$ 表示光滑流形 $M$ 上的光滑 $k$-形式空间。外微分定义为线性映射
+设 $\Omega^k(M)$ 表示光滑流形 $M$ 上的光滑 $k$-形式空间。
+
+外微分定义为一个线性映射
 
 $$
 \mathrm{d}: \Omega^k(M) \longrightarrow \Omega^{k+1}(M)
@@ -59,9 +59,6 @@ $$
   &=\sum_I f_I \mathrm{d}x^I \\
   \mathrm{d}\omega
   &= \sum_I \mathrm{d}f_I \wedge \mathrm{d}x^I \\
-  \mathrm{d}\omega
-  &= \sum_I \sum_j \frac{\partial f_I}{\partial x^j} \mathrm{d}x^j
-  \wedge \mathrm{d}x^I
 \end{align}
 $$
 ```
@@ -73,48 +70,37 @@ $$
 
 项目使用 [tex-fmt](https://github.com/WGUNDERWOOD/tex-fmt) 作为 LaTeX formatter，使用 [remark-math](https://github.com/remarkjs/remark-math) 作为 Markdown math parser。核心逻辑都由 tex-fmt 和 remark-math 完成，项目只进行简单包装。
 
-项目提供 `md-math-fmt` CLI 和 `Markdown Math Formatter` VS Code 扩展。当前 CLI 为 JavaScript 构建产物，运行时需要本机已安装 Node.js （22 或更高版本）和 tex-fmt；项目不内置 tex-fmt，也不提供包含 Node.js runtime 在内的独立二进制。
-
-## 构建
-
-包管理器为 pnpm。
-
-```sh
-pnpm install
-pnpm build
-```
-
-构建结果位于 `dist/`，包含 CLI、可导入的 API 和 VS Code 扩展。
-
-## 打包
-
-CLI 和 VS Code 扩展需要分别打包；打包前会自动运行对应的构建。
-
-```sh
-# 构建 CLI 并生成 md-math-fmt-*.tgz
-pnpm package:cli
-
-# 构建扩展并生成 md-math-fmt-*.vsix
-pnpm package:extension
-```
+项目提供 [`md-math-fmt` CLI](#cli) 和 [`Markdown Math Formatter` VS Code 扩展](#vs-code-扩展)。
 
 ## CLI
 
 ### 安装 CLI
 
-1. 生成 tgz 文件
+目前仅支持从源码安装 CLI。
+
+1. 安装项目依赖
+
+    ```sh
+    pnpm install
+    ```
+
+2. 生成用于安装的 tgz 文件
 
     ```sh
     pnpm package:cli
     ```
 
-2. 全局安装 npm 包，将 `*` 替换为 tgz 文件中的版本号
+3. 全局安装 npm 包，将 `*` 替换为上一步生成的 tgz 文件中的对应部分
 
     ```sh
     npm install -g md-math-fmt-*.tgz
     ```
 
 CLI 命令为 `md-math-fmt`。
+
+CLI 为 JavaScript 构建产物，使用 CLI 需要本机已安装 Node.js 22 或更高版本。项目暂时不提供包含 Node.js runtime 在内的独立二进制。
+
+格式化依赖 tex-fmt。CLI 不内置 tex-fmt，因此要求 PATH 中存在可用的 tex-fmt。
 
 ### 使用 CLI
 
@@ -154,21 +140,31 @@ md-math-fmt --tex-fmt /path/to/tex-fmt --config tex-fmt.toml notes.md
 
 ### 安装 VS Code 扩展
 
-1. 生成 vsix 文件
+目前仅支持从源码安装 VS Code 扩展。
+
+1. 安装项目依赖
+
+    ```sh
+    pnpm install
+    ```
+
+2. 生成用于安装的 vsix 文件
 
     ```sh
     pnpm package:extension
     ```
 
-2. 安装 VS Code 扩展，将 `*` 替换为 vsix 文件中的版本号
+3. 安装 VS Code 扩展，将 `*` 替换为上一步生成的 vsix 文件中的对应部分
 
     ```sh
     code --install-extension md-math-fmt-*.vsix
     ```
 
-    或者也可以在 VS Code 中运行命令 **Extensions: Install from VSIX...**，然后选择生成的 `md-math-fmt-*.vsix` 文件
+    或者也可以在 VS Code 中运行命令 **Extensions: Install from VSIX...**，然后选择上一步生成的 vsix 文件
 
 扩展名称为 `Markdown Math Formatter`。
+
+格式化依赖 tex-fmt。VS Code 扩展不内置 tex-fmt，因此要求 PATH 中存在可用的 tex-fmt。可以在设置中指定 tex-fmt 的路径。
 
 ### 使用 VS Code 扩展
 
@@ -183,14 +179,18 @@ md-math-fmt --tex-fmt /path/to/tex-fmt --config tex-fmt.toml notes.md
     "editor.formatOnSave": true
   },
   "md-math-fmt.texFmtPath": "tex-fmt",
+  "md-math-fmt.configPath": "tex-fmt.toml",
   "md-math-fmt.lineWidth": 80
 }
 ```
 
-`md-math-fmt.configPath` 可指定 tex-fmt TOML 配置文件，相对路径以当前文档目录为基准。
+- `md-math-fmt.texFmtPath` 用于指定 tex-fmt 二进制文件的路径。
+- `md-math-fmt.configPath` 用于指定 tex-fmt TOML 配置文件，相对路径以当前文档目录为基准。
+- `md-math-fmt.lineWidth` 用于指定行宽，会覆盖 tex-fmt 的配置。
 
-缩进使用编辑器的 `tabSize` 和 `insertSpaces` 设置。扩展仅在受信任的工作区运行；
-远程工作区需要在扩展运行的远程环境安装 tex-fmt。
+缩进使用编辑器的 `tabSize` 和 `insertSpaces` 设置。
+
+扩展仅在受信任的工作区运行；远程工作区需要在扩展运行的远程环境安装 tex-fmt。
 
 ## 程序接口
 
@@ -258,36 +258,9 @@ Markdown math 解析由 remark-math 完成。
 
 LaTeX 格式化规则由 tex-fmt 决定。
 
-- 默认配置请参考 <https://github.com/WGUNDERWOOD/tex-fmt#configuration-file-options>，程序提供参数 `--config` 用于指定 tex-fmt 的配置文件。
-- 可以使用 `--line-width` 覆盖 tex-fmt 的 `wraplen` 配置。
+- 默认配置请参考 <https://github.com/WGUNDERWOOD/tex-fmt#configuration-file-options>。如果需要指定 tex-fmt 的配置文件，在 CLI 中使用参数 `--config`，在 VS Code 扩展中使用设置 `md-math-fmt.configPath`。
+- tex-fmt 配置的 `wraplen` 可以被覆盖，在 CLI 中使用 `--line-width`，在 VSCode 扩展中使用 `md-math-fmt.lineWidth`。
 
-## 验证
+## 开发
 
-### 静态检查和格式化
-
-项目使用 Biome 检查和格式化 TypeScript、JavaScript 和 JSON
-
-```sh
-pnpm check
-```
-
-### 类型检查
-
-项目使用 TypeScript 进行类型检查
-
-```sh
-pnpm typecheck
-```
-
-### 测试
-
-项目使用 Node.js 内置的测试模块进行测试
-
-```sh
-pnpm test
-```
-
-测试覆盖核心格式化、CLI 和扩展接口。
-
-- 真实 tex-fmt 集成测试在未安装 tex-fmt 时会跳过，完整验证前请确保 `tex-fmt --version` 可执行。当前集成测试使用 tex-fmt 0.5.7。
-- 扩展接口测试使用 VS Code API 替身，无法替代在 VS Code 扩展宿主中的手动验证。
+阅读[开发者文档](docs/developer.md)。
